@@ -1,5 +1,6 @@
 """ Retrieve Tweets, embeddings, and persist in the Database """
 
+
 import tweepy, basilica
 from decouple import config
 from .models import DB, Tweet, User
@@ -16,8 +17,8 @@ BASILICA = basilica.Connection(config('BASILICA_KEY'))
 # TODO write some useful functions 
 
 def add_or_update_user(username):
-    """ add or update a user *and* their tweets, error if no/private user.""""
-    """ If not private and no error, will pass to the else statement that commits the data  """"
+    """ add or update a user *and* their tweets, error if no/private user """
+    """ If not private and no error, will pass to the else statement that commits the data  """
     try:
         twitter_user = TWITTER.get_user(username)
         db_user = (User.query.get(twitter_user.id) or 
@@ -43,3 +44,11 @@ def add_or_update_user(username):
     else:
         # if no errors then commit to database
         DB.session.commit()
+
+def add_users(users):
+    for user in users:
+        add_or_update_user(user)
+
+def update_all_users():
+    for user in User.query.all():
+        add_or_update_user(user.name)                
