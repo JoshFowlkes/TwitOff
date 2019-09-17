@@ -36,14 +36,14 @@ def create_app():
             tweets = []
         return render_template('user.html', title=name, tweets=tweets, message=message)
 
-
+    @app.route('/compare', methods=['POST'])
     def compare(message=''):
         user1, user2 = sorted([request.values['user1'],
                                request.values['user2']]) 
         if user1 == user2:
             message = "Cannot compare a user to someone that is themself"      
         else:
-            tweet_text = request_values['tweet_text']
+            tweet_text = request.values['tweet_text']
             confidence = int(predict_user(user1, user2, tweet_text) * 100)
             if confidence >= 50:
                 message = f'"{tweet_text}"" is more likely to be said by {user1} than {user2}, with {confidence}% confidence.'   
